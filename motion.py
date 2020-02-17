@@ -1,20 +1,22 @@
 import cv2
 import numpy as np
 from fbchat import Client
+from fbchat.models import *
 import fbchat
 from getpass import getpass
+from datetime import datetime
 
-user = "munyoudoum"
-client = fbchat.Client(user, getpass())
-msg = str("MOTION DETECTED")
-
-cap = cv2.VideoCapture(0)  # or ip address
+cap = cv2.VideoCapture(0)  # 0 or ip address
 frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 
 frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
 ret, frame1 = cap.read()
 ret, frame2 = cap.read()
+
+user = "munyoudoum"
+client = fbchat.Client(user, getpass())
+
 
 while cap.isOpened():
     diff = cv2.absdiff(frame1, frame2)
@@ -30,10 +32,16 @@ while cap.isOpened():
         if cv2.contourArea(contour) < 900:
             continue
         cv2.rectangle(frame1, (x, y), (x+w, y+h), (0, 255, 0), 2)
-        cv2.putText(frame1, "Status: {}".format('Movement'), (10, 20), cv2.FONT_HERSHEY_SIMPLEX,
-                    1, (0, 0, 255), 3)
+        cv2.putText(frame1, "Status: {}".format('Movement'), (10, 20), \
+                cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 3)
+        if "00" < datetime.now().strftime("%S") < "10":
+            cv2.imwrite('01.png', frame1)
+            client.sendLocalImage(
+                "01.png",
+                message=Message(text="MOTION DETECTED"),
+                thread_id=client.uid,
+                thread_type=ThreadType.USER)
 
-        client.send(fbchat.models.Message(msg), '100006908344402')  # fbid
         # last_event = datetime.now()
     # cv2.drawContours(frame1, contours, -1, (0, 255, 0), 2)
 

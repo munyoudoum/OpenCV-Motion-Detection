@@ -1,7 +1,6 @@
 # 02/2020
 # code from https://youtu.be/MkcUgPhOlP8
-# I modify the code to fit my needs
-# send a message as picture on Facebook when there is any motion from the camera
+# I modify the code to fit the needs
 import cv2
 import numpy as np
 # not official from facebook
@@ -48,10 +47,7 @@ while cap.isOpened():
                 message=Message(text="MOTION DETECTED"),
                 thread_id=client.uid,
                 thread_type=ThreadType.USER)
-
-        # last_event = datetime.now()
-    # cv2.drawContours(frame1, contours, -1, (0, 255, 0), 2)
-
+                
     image = cv2.resize(frame1, (1280, 720))
 
     cv2.imshow("feed", frame1)
